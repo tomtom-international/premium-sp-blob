@@ -20,7 +20,7 @@
     <groupId>com.tomtom.traffic</groupId>
     <artifactId>premium-sp-blob</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
 
     <organization>
         <name>TomTom N.V.</name>
