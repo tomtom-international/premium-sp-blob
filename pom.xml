@@ -20,7 +20,7 @@
     <groupId>com.tomtom.traffic</groupId>
     <artifactId>premium-sp-blob</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
 
     <organization>
         <name>TomTom N.V.</name>
@@ -137,7 +137,7 @@
     <scm>
         <connection>scm:git:ssh://git@bitbucket.tomtomgroup.com:7999/iqr/premium-sp-blob.git</connection>
         <developerConnection>scm:git:ssh://git@bitbucket.tomtomgroup.com:7999/iqr/premium-sp-blob.git</developerConnection>
-        <tag>premium-sp-blob-1.0.0</tag>
+        <tag>HEAD</tag>
     </scm>
 
 </project>
