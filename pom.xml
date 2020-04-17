@@ -117,8 +117,27 @@
         </license>
     </licenses>
 
+    <distributionManagement>
+        <!-- The core TomTom release repository, there can only be one! -->
+        <repository>
+            <id>nexus</id>
+            <name>TomTom Release Repository</name>
+            <url>http://nexus.tomtomgroup.com:8080/nexus/content/repositories/releases</url>
+        </repository>
+
+        <!-- The core TomTom snapshot repository, there can only be one! -->
+        <snapshotRepository>
+            <id>nexus</id>
+            <name>TomTom Snapshot Repository</name>
+            <url>http://nexus.tomtomgroup.com:8080/nexus/content/repositories/snapshots</url>
+        </snapshotRepository>
+
+    </distributionManagement>
+
     <scm>
-        <url>http://github.com/tomtom-international/premium-sp-blob</url>
+        <connection>scm:git:ssh://git@bitbucket.tomtomgroup.com:7999/iqr/premium-sp-blob.git</connection>
+        <developerConnection>scm:git:ssh://git@bitbucket.tomtomgroup.com:7999/iqr/premium-sp-blob.git</developerConnection>
+        <tag>premium-sp-blob-1.0.0</tag>
     </scm>
 
 </project>
