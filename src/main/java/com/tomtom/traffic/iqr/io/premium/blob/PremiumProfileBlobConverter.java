@@ -132,7 +132,7 @@ public class PremiumProfileBlobConverter {
      * @return whether the version of the provided blob can be correctly parsed by this converter
      */
     public static boolean hasSupportedVersion(final byte[] blob) {
-        int version = blob[0] & 0xff;
+        int version = Byte.toUnsignedInt(blob[0]);
         return version <= VERSION;
     }
 
@@ -173,7 +173,7 @@ public class PremiumProfileBlobConverter {
      * @throws IllegalArgumentException if the version of the binary blob is not supported
      */
     public static void setMeanSpeeds(final byte[] blob, final int weekDaySpeed, final int weekendSpeed) {
-        int version = blob[0] & 0xff;
+        int version = Byte.toUnsignedInt(blob[0]);
         if (version > VERSION) {
             throw new IllegalArgumentException(String.format("Premium profile blob version %s is not supported",
                     version));
@@ -192,12 +192,12 @@ public class PremiumProfileBlobConverter {
      */
     public PremiumProfileBlobData fromBinaryBlob(final byte[] blob) {
         int index = 0;
-        int version = blob[index++] & 0xff;
+        int version = Byte.toUnsignedInt(blob[index++]);
         if (version > VERSION) {
             throw new IllegalArgumentException(String.format("Premium profile blob version %d is not supported", blob[0]));
         }
-        int weekDaySpeed = blob[index++];
-        int weekendSpeed = blob[index++];
+        int weekDaySpeed = Byte.toUnsignedInt(blob[index++]);
+        int weekendSpeed = Byte.toUnsignedInt(blob[index++]);
 
         if (blob.length > 3) {
             return fromBinaryProfileData(blob, index, weekDaySpeed, weekendSpeed);
@@ -449,7 +449,7 @@ public class PremiumProfileBlobConverter {
         @SuppressWarnings("SameParameterValue")
         static HeaderAndIndex decode(final byte[] blob, final int index) {
             int currIndex = index;
-            int outTimeResolution = blob[currIndex++] & 0xFF;
+            int outTimeResolution = Byte.toUnsignedInt(blob[currIndex++]);
             int actualTimeResolution =
                     (outTimeResolution == OUT_TIME_RESOLUTION_FOR_24H) ? MINUTES_PER_DAY : outTimeResolution;
             byte daysBitSet = blob[currIndex++];
