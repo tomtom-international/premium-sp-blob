@@ -56,6 +56,14 @@ public class PremiumProfileBlobConverterTest {
         runOnSimpleInputAndVerify(true);
     }
 
+    @Test
+    public void noDailyProfilesWithLargeMeanSpeeds() {
+        inputWeekdaySpeed = 130;
+        inputWeekendSpeed = 132;
+        runOnSimpleInputAndVerify(false);
+        runOnSimpleInputAndVerify(true);
+    }
+
     /**
      * Tests that resolutions larger than {@value Byte#MAX_VALUE} are encoded and decoded correctly.
      *
@@ -210,10 +218,17 @@ public class PremiumProfileBlobConverterTest {
         inputWeekdaySpeed = inputWeekdaySpeed + 7;
         inputWeekendSpeed = inputWeekendSpeed + 3;
         PremiumProfileBlobConverter.setMeanSpeeds(blob, inputWeekdaySpeed, inputWeekendSpeed);
-
         // convert back
         PremiumProfileBlobData actResult = converter.fromBinaryBlob(blob);
+        // verify correctness of re-converted data - only want the mean speeds to have changed, not the daily profiles
+        verifyCorrectness(actResult, blob, expTimeResAndBitSet, true);
 
+        // Change mean speeds again - this time to values larger than 127 (and adapt expected speeds)
+        inputWeekdaySpeed = 133;
+        inputWeekendSpeed = 137;
+        PremiumProfileBlobConverter.setMeanSpeeds(blob, inputWeekdaySpeed, inputWeekendSpeed);
+        // convert back
+        actResult = converter.fromBinaryBlob(blob);
         // verify correctness of re-converted data - only want the mean speeds to have changed, not the daily profiles
         verifyCorrectness(actResult, blob, expTimeResAndBitSet, true);
     }
