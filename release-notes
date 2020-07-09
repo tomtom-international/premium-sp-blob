@@ -1,6 +1,6 @@
 Premium Speed Profiles Blob - Release History
 
-Next version
+Version 1.0.2
  - Added convenience methods to infer the minimum non-negative speed-value supported inside a daily time-bin
  - Simplified code
  - Made FlexSpeedEncoding public to allow for external usage
