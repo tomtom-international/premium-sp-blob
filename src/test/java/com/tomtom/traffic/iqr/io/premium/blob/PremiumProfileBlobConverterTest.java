@@ -30,7 +30,7 @@ import org.junit.Test;
 
 public class PremiumProfileBlobConverterTest {
 
-    private static final Offset<Double> EPS = Offset.offset(1.0e-7);
+    private static final Offset<Double> EPS = Offset.offset(Double.MIN_NORMAL);
     private static final int WHOLE_DAY_RESOLUTION = 24 * 60;
 
     private double[][] inputSpeeds;
@@ -231,6 +231,19 @@ public class PremiumProfileBlobConverterTest {
         actResult = converter.fromBinaryBlob(blob);
         // verify correctness of re-converted data - only want the mean speeds to have changed, not the daily profiles
         verifyCorrectness(actResult, blob, expTimeResAndBitSet, true);
+    }
+
+    @Test
+    public void providesCorrectMinimumInputOutputValues() {
+        // encoding minimumZeroInputValue does not yield 0
+        assertThat(PremiumProfileBlobConverter.asEncoded(PremiumProfileBlobConverter.getMinimumNonZeroInputValue()))
+                .isGreaterThan(0.0);
+        // encoding minimumZeroInputValue indeed yields minimumZeroOutputValue
+        assertThat(PremiumProfileBlobConverter.asEncoded(PremiumProfileBlobConverter.getMinimumNonZeroInputValue()))
+                .isEqualTo(PremiumProfileBlobConverter.getMinimumNonZeroOutputValue());
+        // encoding something smaller than minimumZeroInputValue does result in 0
+        double nextSmallerValue = Math.nextAfter(FlexSpeedEncoding.MINIMUM_NONZERO_INPUT_VALUE, Double.NEGATIVE_INFINITY);
+        assertThat(PremiumProfileBlobConverter.asEncoded(nextSmallerValue)).isEqualTo(0.0);
     }
 
     private void runOnFullInputAndVerify(final boolean isZipData, final TimeResAndBitSet expTimeResAndBitSet) {

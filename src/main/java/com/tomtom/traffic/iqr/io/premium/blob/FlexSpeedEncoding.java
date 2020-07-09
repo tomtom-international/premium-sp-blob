@@ -36,9 +36,13 @@ package com.tomtom.traffic.iqr.io.premium.blob;
  * </table>
  */
 
-class FlexSpeedEncoding {
+public class FlexSpeedEncoding {
 
-    private static final double LOG_2 = Math.log(2);
+    /** The smallest non-zero input value that will not be rounded to zero when using this encoding. */
+    public static final double MINIMUM_NONZERO_INPUT_VALUE = 1 / 128.0;
+
+    /** The smallest non-zero value that can be represented using this encoding. */
+    public static final double MINIMUM_NONZERO_OUTPUT_VALUE = 1 / 64.0;
 
     private FlexSpeedEncoding() {
         // Hiding the implicit public constructor
@@ -63,8 +67,10 @@ class FlexSpeedEncoding {
         if (encodedSpeed >= 255) {
             encodedSpeed = 255;
         }
-        int exponent = iLogB(encodedSpeed);
-        int mantissa = (int) Math.round(scaleBN(encodedSpeed, 7 - exponent) - 128);
+        // It is safe to calculate the exponent this way since speed is > 2 here
+        int exponent = 31 - Integer.numberOfLeadingZeros((int)encodedSpeed);
+        // (7 - exponent) is never negative here since encodedSpeed is at most 255
+        int mantissa = (int) Math.round(encodedSpeed * (1 << (7 - exponent)) - 128);
         return (short) ((exponent << 7) + mantissa);
     }
 
@@ -81,29 +87,9 @@ class FlexSpeedEncoding {
         int mantissa = raw & 0x7F;
         int exponent = (raw >> 7) & 7;
         if (exponent == 0) {
-            return scaleBN(mantissa, -6);
+            return (double)mantissa / (1 << 6);
         }
-        return scaleBN(mantissa + 128.0, exponent - 7);
-    }
-
-    // Helper method: returns the integral part of the base-2 logarithm of the passed value
-    // Modeled after ilogb in C++ (see e.g. https://en.cppreference.com/w/cpp/numeric/math/ilogb)
-    private static int iLogB(final double speed) {
-        return (int) Math.floor(Math.log(speed) / LOG_2);
-    }
-
-    // Helper method: scales speed by 2 to the power of exp
-    // Modeled after scalbn in C++ (see e.g. https://en.cppreference.com/w/cpp/numeric/math/scalbn)
-    private static double scaleBN(final double speed, int exp) {
-        int absExp = Math.abs(exp);
-        int factor = 1;
-        for (int i = 1; i <= absExp; ++i) {
-            factor *= 2;
-        }
-        if (exp < 0) {
-            return speed / factor;
-        }
-        return speed * factor;
+        return (mantissa + 128.0) / (1 << (7 - exponent));
     }
 
 }
