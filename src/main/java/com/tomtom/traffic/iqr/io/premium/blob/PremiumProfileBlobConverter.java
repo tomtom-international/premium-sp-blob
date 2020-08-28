@@ -141,6 +141,8 @@ public class PremiumProfileBlobConverter {
      *
      * Due to the value-dependent precision of encoded speed-values, the represented speed might differ from the passed
      * speed value.
+     * 
+     * @see #asEncoded(double)
      */
     public static String toText(final double speed) {
         double encoded = asEncoded(speed);
@@ -160,6 +162,35 @@ public class PremiumProfileBlobConverter {
      */
     public static double asEncoded(final double speed) {
         return FlexSpeedEncoding.decode(FlexSpeedEncoding.encode(speed));
+    }
+
+    /**
+     * Returns the smallest non-zero value that can effectively be stored within a binary blob.
+     *
+     * @see #asEncoded(double)
+     *
+     * @return The smallest speed value that can effectively be stored within a binary blob.
+     */
+    public static double getMinimumNonZeroOutputValue() {
+        return FlexSpeedEncoding.MINIMUM_NONZERO_OUTPUT_VALUE;
+    }
+
+    /**
+     * Returns the smallest input value that will result in an non-zero speed value when encoded in a binary blob.
+     *
+     * If it is important to guarantee that no speeds of zero will be included in a binary blob, any candidate speed
+     * should be verified to be at least as large as this value.
+     *
+     * The effectively stored speed when encoding this value is given by {@link #getMinimumNonZeroOutputValue()}.
+     *
+     * The encoding of any speed smaller than this value will result in a stored value of zero.
+     *
+     * @see #asEncoded(double)
+     *
+     * @return The smallest speed that will be encoded as a non-zero value within a binary blob
+     */
+    public static double getMinimumNonZeroInputValue() {
+        return FlexSpeedEncoding.MINIMUM_NONZERO_INPUT_VALUE;
     }
 
     /**

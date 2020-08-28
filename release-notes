@@ -1,0 +1,12 @@
+Premium Speed Profiles Blob - Release History
+
+Version 1.0.2
+ - Added convenience methods to infer the minimum non-negative speed-value supported inside a daily time-bin
+ - Simplified code
+ - Made FlexSpeedEncoding public to allow for external usage
+
+Version 1.0.1
+ - Fixed a bug that caused mean speeds above 127 to be de-coded as negative values
+
+Version 1.0.0
+ - Initial version, providing utility classes to encode and decode binary PSP blob data

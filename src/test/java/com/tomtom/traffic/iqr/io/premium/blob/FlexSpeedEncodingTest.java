@@ -15,18 +15,33 @@
  */
 package com.tomtom.traffic.iqr.io.premium.blob;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
 
 public class FlexSpeedEncodingTest {
 
     @Test
+    public void testMinimumNonZeroSpeedValues() {
+        // ensure that the provided MINIMUM_NONZERO_INPUT_VALUE value is not rounded to 0 when encoded
+        assertThat(FlexSpeedEncoding.encode(FlexSpeedEncoding.MINIMUM_NONZERO_INPUT_VALUE))
+                .isGreaterThan((short)0);
+        // ensure that encoding the provided MINIMUM_NONZERO_INPUT_VALUE value indeed decodes back to the provided
+        // MINIMUM_NONZERO_OUTPUT_VALUE
+        assertThat(FlexSpeedEncoding.decode(FlexSpeedEncoding.encode(FlexSpeedEncoding.MINIMUM_NONZERO_INPUT_VALUE)))
+                .isEqualTo(FlexSpeedEncoding.MINIMUM_NONZERO_OUTPUT_VALUE);
+        // ensure that the provided MINIMUM_NONZERO_INPUT_VALUE value is not unnecessarily large
+        // (anything smaller is indeed rounded to zero)
+        double nextSmallerValue = Math.nextAfter(FlexSpeedEncoding.MINIMUM_NONZERO_INPUT_VALUE, Double.NEGATIVE_INFINITY);
+        assertThat(FlexSpeedEncoding.encode(nextSmallerValue)).isEqualTo((short)0);
+    }
+
+    @Test
     public void encodingOfNegativeValuesYieldsZero() {
         for (double value = -255; value < 0; value += 0.01) {
             // negative values are always encoded (and thus also decoded) as 0
-            assertEquals(0, FlexSpeedEncoding.encode(value));
-            assertEquals(0, FlexSpeedEncoding.decode(FlexSpeedEncoding.encode(value)), 0.0);
+            assertThat(FlexSpeedEncoding.encode(value)).isEqualTo((short)0);
+            assertThat(FlexSpeedEncoding.decode(FlexSpeedEncoding.encode(value))).isEqualTo(0.0);
         }
     }
 
@@ -36,9 +51,9 @@ public class FlexSpeedEncodingTest {
         // just testing some exemplary values above 255
         for (int exponent = 0; exponent < 8; ++exponent) {
             // largest value should be 255 ...
-            assertEquals(255, FlexSpeedEncoding.decode(FlexSpeedEncoding.encode(value)), 0.0);
+            assertThat(FlexSpeedEncoding.decode(FlexSpeedEncoding.encode(value))).isEqualTo(255);
             // ... which corresponds to 10 bits set
-            assertEquals(0x3ff, FlexSpeedEncoding.encode(value));
+            assertThat(FlexSpeedEncoding.encode(value)).isEqualTo((short)0x3ff);
             value *= 2;
         }
     }
@@ -67,15 +82,16 @@ public class FlexSpeedEncodingTest {
             int encoded = FlexSpeedEncoding.encode(value);
 
             // encoded value must at most have 10 bit
-            assertEquals(0, encoded >> 10);
+            assertThat(encoded >> 10).isEqualTo(0);
 
             // encoded value must retain the expected resolution
             double expected = Math.round(value / resolution) * resolution;
             double obtained = FlexSpeedEncoding.decode(FlexSpeedEncoding.encode(value));
-            assertEquals(
-                    String.format("Encoding of %g yields %g instead of %g (resolution = %g)",
-                            value, obtained, expected, resolution),
-                    expected, obtained, 0.0);
+            assertThat(obtained)
+                    .withFailMessage(
+                            String.format("Encoding of %g yields %g instead of %g (resolution = %g)",
+                                    value, obtained, expected, resolution))
+                    .isEqualTo(expected);
         }
     }
 
@@ -83,7 +99,7 @@ public class FlexSpeedEncodingTest {
     public void encodingOfValidSpeedsYieldsTenBit() {
         for (double value = 0.0; value <= 255; value += 0.001) {
             // encoded value must at most have 10 bit
-            assertEquals(0, FlexSpeedEncoding.encode(value) >> 10);
+            assertThat(FlexSpeedEncoding.encode(value) >> 10).isEqualTo(0);
         }
     }
 }
