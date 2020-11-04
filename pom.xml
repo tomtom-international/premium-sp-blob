@@ -27,6 +27,15 @@
         <url>https://www.tomtom.com</url>
     </organization>
 
+    <developers>
+        <developer>
+            <name>Steffen Wiesner</name>
+            <email>Steffen.Wiesner@tomtom.com</email>
+            <organization>TomTom N.V.</organization>
+            <organizationUrl>https://www.tomtom.com</organizationUrl>
+        </developer>
+    </developers>
+
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
