@@ -24,8 +24,8 @@ import java.util.function.IntFunction;
  * A Premium-Speed-Profile (PSP) binary blob contains the following information about a single directed segment:
  *
  * <ul>
- * <li/> The two mean speeds for working-days and weekend-days.
- * <li/> Daily 24h-speed-profiles for up to 7 days of the week in a given temporal resolution
+ * <li> The two mean speeds for working-days and weekend-days.</li>
+ * <li> Daily 24h-speed-profiles for up to 7 days of the week in a given temporal resolution</li>
  * </ul>
  *
  * A binary blob - and hence the corresponding {@code PremiumProfileBlobData} object - might not contain a daily speed

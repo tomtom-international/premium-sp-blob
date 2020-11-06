@@ -16,43 +16,38 @@
 package com.tomtom.traffic.iqr.io.premium.blob;
 
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import com.google.common.primitives.Bytes;
+
+import java.io.*;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
-
-import com.google.common.primitives.Bytes;
 
 /**
  * Converts Premium-Speed-Profile (PSP) data to and from binary blobs.
  *
  * The PSP data is provided/returned in the form of {@link PremiumProfileBlobData} objects.
  *
- * <h4>Binary Blob Format</h4>
+ * <b>Binary Blob Format</b>
+ * <p>
  * The format of a PSP binary blob is as follows (version 1.0):
  *
  * <ul>
- * <li/> Byte No. 1 : Version of the blob
- * <li/> Byte No. 2 : Working-day speed in km/h as 8-bit integer
- * <li/> Byte No. 3 : Weekend-day speed in km/h as 8-bit integer
+ * <li> Byte No. 1 : Version of the blob</li>
+ * <li> Byte No. 2 : Working-day speed in km/h as 8-bit integer</li>
+ * <li> Byte No. 3 : Weekend-day speed in km/h as 8-bit integer</li>
  * </ul>
  * (Possible blob end - e.g. for road elements without detailed profile data)
  * <ul>
- * <li/> Byte No. 4 : Width of the individual time bins in minutes as 8-bit integer
- * <li/> Byte No. 5 : Relevant days as bit field
- * <li/> Bytes 6+   : zlib-compressed speed values in a dedicated encoding (see below)
+ * <li> Byte No. 4 : Width of the individual time bins in minutes as 8-bit integer</li>
+ * <li> Byte No. 5 : Relevant days as bit field</li>
+ * <li> Bytes 6+   : zlib-compressed speed values in a dedicated encoding (see below)</li>
  * </ul>
  *
- * <h4>Daily Profile Information</h4>
- * A blob containing only mean speeds and no daily profiles has a size of exactly 3 bytes. A blob that <it>does</it>
+ * <b>Daily Profile Information</b>
+ * <p>
+ * A blob containing only mean speeds and no daily profiles has a size of exactly 3 bytes. A blob that <em>does</em>
  * contain detailed daily speed profiles contains two additional bytes plus the zlib-deflated and encoded speed-profile
  * data, thus resulting in more than 5 + 11 bytes (the 11 bytes resulting from the minimal zlib-byte-overhead of the 6
  * byte header and 5 byte footer).
@@ -74,15 +69,16 @@ import com.google.common.primitives.Bytes;
  * provided in a single continuous sequence starting with the first value of the first available day and ending with the
  * last value of the last contained day.
  *
- * <h4>Speed-Value Encoding</h4>
+ * <b>Speed-Value Encoding</b>
+ * <p>
  * The sequence of speed values is provided in a custom encoding as follows:
  * <ul>
- * <li/> The speeds are encoded as 10-bit floating-point values using the {@link FlexSpeedEncoding} functionality.
- * <li/> Only for the very first speed value in the entire sequence the full absolute value is retained. For all further
- * speeds, only the difference to the absolute value of their predecessor is encoded and stored.
- * <li/> Using methods of the {@link ZigZagEncoding} class, the resulting deltas are encoded as positive integer numbers.
- * <li/> The {@link VarIntEncoding} class is used to efficiently encode the resulting positive deltas.
- * <li/> Finally, the entire byte array is deflated using standard zlib-compression.
+ * <li> The speeds are encoded as 10-bit floating-point values using the {@link FlexSpeedEncoding} functionality.</li>
+ * <li> Only for the very first speed value in the entire sequence the full absolute value is retained. For all further
+ * speeds, only the difference to the absolute value of their predecessor is encoded and stored.</li>
+ * <li> Using methods of the {@link ZigZagEncoding} class, the resulting deltas are encoded as positive integer numbers.</li>
+ * <li> The {@link VarIntEncoding} class is used to efficiently encode the resulting positive deltas.</li>
+ * <li> Finally, the entire byte array is deflated using standard zlib-compression.</li>
  * </ul>
  *
  * Note that due to the used {@code FlexSpeedEncoding}, the precision of the stored values is not uniform but depends
@@ -141,7 +137,10 @@ public class PremiumProfileBlobConverter {
      *
      * Due to the value-dependent precision of encoded speed-values, the represented speed might differ from the passed
      * speed value.
-     * 
+     *
+     * @param speed Speed.
+     * @return Speed as text.
+     *
      * @see #asEncoded(double)
      */
     public static String toText(final double speed) {
@@ -159,6 +158,9 @@ public class PremiumProfileBlobConverter {
      *
      * Due to the value-dependent precision of encoded speed-values inside the blob, this effectively stored speed can
      * differ from the originally passed speed value.
+     *
+     * @param speed Speed.
+     * @return Encoded speed.
      */
     public static double asEncoded(final double speed) {
         return FlexSpeedEncoding.decode(FlexSpeedEncoding.encode(speed));
