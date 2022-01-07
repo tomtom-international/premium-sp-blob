@@ -1,5 +1,8 @@
 Premium Speed Profiles Blob - Release History
 
+Version 1.0.3
+ - Updated dependencies
+ 
 Version 1.0.2
  - Added convenience methods to infer the minimum non-negative speed-value supported inside a daily time-bin
  - Simplified code
