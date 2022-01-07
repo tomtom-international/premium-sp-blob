@@ -20,7 +20,7 @@
     <groupId>com.tomtom.traffic</groupId>
     <artifactId>premium-sp-blob</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.3</version>
+    <version>1.0.4-SNAPSHOT</version>
 
     <name>Premium Speed Profiles Blob</name>
     <description>
@@ -145,6 +145,7 @@
 
     <scm>
         <url>http://github.com/tomtom-international/premium-sp-blob</url>
+	    <tag>HEAD</tag>
     </scm>
 
     <profiles>
