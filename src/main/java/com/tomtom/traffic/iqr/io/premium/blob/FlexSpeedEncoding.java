@@ -23,7 +23,7 @@ package com.tomtom.traffic.iqr.io.premium.blob;
  * This encoding can represent 1024 values from 0 to 255. The smallest non-zero value that can be represented is 1/64.
  * The provided precision is not uniform but is different for different value ranges as shown in the following:
  *
- * <table summary="Encoding speed values">
+ * <table>
  * <tr><th>Exponent    </th> <th>Range          </th> <th>Precision </th></tr>
  * <tr><td>0           </td> <td>0-2            </td> <td> 1/64 </td></tr>
  * <tr><td>1           </td> <td>2-4            </td> <td> 1/64 </td></tr>
@@ -33,6 +33,7 @@ package com.tomtom.traffic.iqr.io.premium.blob;
  * <tr><td>5           </td> <td>32-64          </td> <td> 1/4  </td></tr>
  * <tr><td>6           </td> <td>64-128         </td> <td> 1/2  </td></tr>
  * <tr><td>7           </td> <td>128-255        </td> <td> 1    </td></tr>
+ * <caption>Encoding speed values</caption>
  * </table>
  */
 
