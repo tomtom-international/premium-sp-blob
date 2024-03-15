@@ -85,6 +85,16 @@ Several accessors allow to infer the contained speed information from the blob d
 
 ```
 
+## Release
+
+Releases are published to [Maven Central](https://central.sonatype.com/artifact/com.tomtom.traffic/premium-sp-blob):
+
+```console
+    mvn clean verify
+    mvn clean deploy -Pdeploy-maven-central
+    mvn nexus-staging:release -Pdeploy-maven-central
+```
+
 ## License
 
 Licensed under the Apache License, Version 2.0 (the "License");
